@@ -58,7 +58,7 @@ public class LoadCollectionMARCXML extends LoadCollection {
 		if (Parametros==null)
 		{
 			ArrayList<ImportExportPair> ListaCampos=new ArrayList<ImportExportPair>();
-			ListaCampos.add(new ImportExportPair(ImportExportDataEnum.File, "XML File :"));
+			ListaCampos.add(new ImportExportPair(ImportExportDataEnum.File, "Upload XML File :"));
 			Parametros=ListaCampos;
 			return ListaCampos;
 		}
