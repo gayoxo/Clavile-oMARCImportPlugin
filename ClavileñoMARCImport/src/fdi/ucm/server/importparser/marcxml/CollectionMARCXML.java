@@ -121,7 +121,7 @@ public class CollectionMARCXML implements InterfaceMARCXMLparser {
 		NodeList nodeListMARC = rootElement.getElementsByTagName("record");
 		if(nodeListMARC != null)
 			for (int i = 0; i < nodeListMARC.getLength(); i++) {
-				CompleteDocuments D=new CompleteDocuments(coleccionstatica,  "", "");
+				CompleteDocuments D=new CompleteDocuments(coleccionstatica, Obra, "", "");
 				coleccionstatica.getEstructuras().add(D);
 //				System.out.println("R"+i);
 				Node Record = nodeListMARC.item(i);

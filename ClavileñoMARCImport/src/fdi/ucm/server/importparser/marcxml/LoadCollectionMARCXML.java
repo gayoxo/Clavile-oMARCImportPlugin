@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import fdi.ucm.server.modelComplete.ImportExportDataEnum;
 import fdi.ucm.server.modelComplete.ImportExportPair;
 import fdi.ucm.server.modelComplete.LoadCollection;
-import fdi.ucm.server.modelComplete.collection.CompleteCollection;
 import fdi.ucm.server.modelComplete.collection.CompleteCollectionAndLog;
 
 /**
@@ -132,14 +131,7 @@ public class LoadCollectionMARCXML extends LoadCollection {
 		CollectionXMLparser = xMLparser;
 	}
 
-	@Override
-	public boolean needComplete() {
-		return true;
-	}
 
-	@Override
-	public void setcompleteCollectionPre(CompleteCollection pre) {
-		//TODO Crear la tabla hash con lo que necesitamos.
-	}
+
 
 }

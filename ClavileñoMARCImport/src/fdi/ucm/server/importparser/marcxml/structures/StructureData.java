@@ -309,7 +309,7 @@ public class StructureData implements InterfaceMARCXMLparser {
 		
 		if (tagS.equals("100"))
 		{
-		CompleteDocuments AutorTemporal=new CompleteDocuments(LColec.getCollectionXMLparser().getColeccion(), "TemporalName", "");
+		CompleteDocuments AutorTemporal=new CompleteDocuments(LColec.getCollectionXMLparser().getColeccion(), LColec.getCollectionXMLparser().getAuthor(), "TemporalName", "");
 		if (controled instanceof Element)
 		{
 		NodeList nodelistadata = ((Element)controled).getElementsByTagName("subfield");
@@ -354,7 +354,7 @@ public class StructureData implements InterfaceMARCXMLparser {
 		
 		if (tagS.equals("700"))
 		{
-		CompleteDocuments AutorTemporal=new CompleteDocuments(LColec.getCollectionXMLparser().getColeccion(), "TemporalName", "");
+		CompleteDocuments AutorTemporal=new CompleteDocuments(LColec.getCollectionXMLparser().getColeccion(), LColec.getCollectionXMLparser().getAuthor(), "TemporalName", "");
 		if (controled instanceof Element)
 		{
 		NodeList nodelistadata = ((Element)controled).getElementsByTagName("subfield");
