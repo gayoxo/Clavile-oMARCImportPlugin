@@ -4,11 +4,22 @@
 package fdi.ucm.server.importparser.marcxml;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import fdi.ucm.server.modelComplete.ImportExportDataEnum;
 import fdi.ucm.server.modelComplete.ImportExportPair;
 import fdi.ucm.server.modelComplete.LoadCollection;
+import fdi.ucm.server.modelComplete.collection.CompleteCollection;
 import fdi.ucm.server.modelComplete.collection.CompleteCollectionAndLog;
+import fdi.ucm.server.modelComplete.collection.document.CompleteDocuments;
+import fdi.ucm.server.modelComplete.collection.document.CompleteElement;
+import fdi.ucm.server.modelComplete.collection.document.CompleteTextElement;
+import fdi.ucm.server.modelComplete.collection.grammar.CompleteElementType;
+import fdi.ucm.server.modelComplete.collection.grammar.CompleteGrammar;
+import fdi.ucm.server.modelComplete.collection.grammar.CompleteOperationalValueType;
+import fdi.ucm.server.modelComplete.collection.grammar.CompleteOperationalView;
+import fdi.ucm.server.modelComplete.collection.grammar.CompleteStructure;
 
 /**
  * Clase que implementa la creacion de una coleccion basandonos en una BBDD MySQL
@@ -17,6 +28,7 @@ import fdi.ucm.server.modelComplete.collection.CompleteCollectionAndLog;
  */
 public class LoadCollectionMARCXML extends LoadCollection {
 
+	private HashSet<String> HashValuesControl;
 	private static ArrayList<ImportExportPair> Parametros;
 	private ArrayList<String> Log;
 	private CollectionMARCXML CollectionXMLparser;
@@ -40,7 +52,11 @@ public class LoadCollectionMARCXML extends LoadCollection {
 		if (DateEntrada!=null)	
 		{
 			CollectionXMLparser.setFilename(DateEntrada.get(0));
-
+			
+			if (HashValuesControl==null)
+				HashValuesControl=new HashSet<String>();
+			CollectionXMLparser.setValuesControl(HashValuesControl);
+			
 			CollectionXMLparser.ProcessAttributes();
 			CollectionXMLparser.ProcessInstances();
 			
@@ -131,7 +147,64 @@ public class LoadCollectionMARCXML extends LoadCollection {
 		CollectionXMLparser = xMLparser;
 	}
 
+@Override
+public boolean needComplete() {
+	return true;
+}
+
+@Override
+public void setcompleteCollectionPre(CompleteCollection pre) {
+	
+	HashValuesControl=new HashSet<String>();
+	boolean found = false;
+	CompleteStructure VOO1=null;
+	for (CompleteGrammar gram1 : pre.getMetamodelGrammar()) {
+		 VOO1=find001(gram1.getSons());
+		if (found)
+			break;
+	}
+	
+	for (CompleteDocuments doc : pre.getEstructuras()) 
+		for (CompleteElement elem : doc.getDescription())
+			if (elem.getHastype().equals(VOO1)&&elem instanceof CompleteTextElement)
+			{
+				HashValuesControl.add(((CompleteTextElement)elem).getValue());
+			}
+
+	
+}
 
 
+
+private CompleteStructure find001(List<CompleteStructure> sons) {
+	for (CompleteStructure completeStructure : sons) {
+		if (is001(completeStructure))
+			return completeStructure;
+		else
+			{
+			CompleteStructure VOO1t=find001(completeStructure.getSons());
+			if (VOO1t!=null)
+				return VOO1t;
+			}
+		
+	}
+	return null;
+}
+
+
+
+private boolean is001(CompleteStructure completeStructure) {
+	if (completeStructure instanceof CompleteElementType)
+		for (CompleteOperationalView view : ((CompleteElementType)completeStructure).getShows())
+			for (CompleteOperationalValueType typeValue : view.getValues())
+				if (view.getName().toLowerCase().equals("marc")
+						&&typeValue.getName().toLowerCase().equals("field")
+						&&typeValue.getDefault().toLowerCase().equals("001"))
+							return true;
+
+	
+	//EOC
+	return false;
+}
 
 }

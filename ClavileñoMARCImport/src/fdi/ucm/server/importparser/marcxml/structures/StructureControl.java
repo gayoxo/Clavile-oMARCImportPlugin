@@ -12,6 +12,8 @@ import fdi.ucm.server.modelComplete.collection.document.CompleteDocuments;
 import fdi.ucm.server.modelComplete.collection.document.CompleteTextElement;
 import fdi.ucm.server.modelComplete.collection.grammar.CompleteElementType;
 import fdi.ucm.server.modelComplete.collection.grammar.CompleteGrammar;
+import fdi.ucm.server.modelComplete.collection.grammar.CompleteOperationalValueType;
+import fdi.ucm.server.modelComplete.collection.grammar.CompleteOperationalView;
 import fdi.ucm.server.modelComplete.collection.grammar.CompleteStructure;
 import fdi.ucm.server.modelComplete.collection.grammar.CompleteTextElementType;
 
@@ -24,6 +26,7 @@ public class StructureControl implements InterfaceMARCXMLparser {
 	private LoadCollectionMARCXML LColec;
 	private CompleteElementType Control;
 	private HashMap<String,CompleteTextElementType> MapaControl;
+
 			
 	public StructureControl(CompleteGrammar obra, LoadCollectionMARCXML lCole) {
 		Control=new CompleteElementType("Control", obra);
@@ -40,6 +43,12 @@ public class StructureControl implements InterfaceMARCXMLparser {
 		CompleteTextElementType ControlNumberFull = new CompleteTextElementType("Control Number Full", Control);
 		Control.getSons().add(ControlNumberFull);
 		MapaControl.put("001", ControlNumberFull);
+		CompleteOperationalView CV=new CompleteOperationalView("MARC");
+		CV.getValues().add(new CompleteOperationalValueType("Field", "001", CV));
+		ControlNumberFull.getShows().add(CV);
+		
+		
+		
 //		003 - Control Number Identifier Full | Concise
 		CompleteTextElementType ControlNumberIdentifierFull = new CompleteTextElementType("Control Number Identifier Full", Control);
 		Control.getSons().add(ControlNumberIdentifierFull);
@@ -76,8 +85,9 @@ public class StructureControl implements InterfaceMARCXMLparser {
 		return Control;
 	}
 
-	public void ProcessInstances(Node controled, String nodeValue,
+	public String ProcessInstances(Node controled, String nodeValue,
 			CompleteDocuments Doc, int RecorNumber) {
+		String ValueIdControl=null;
 		Node ControlN=controled.getAttributes().getNamedItem("tag");
 		if (ControlN!=null&&ControlN.getNodeValue()!=null)
 			{
@@ -88,14 +98,15 @@ public class StructureControl implements InterfaceMARCXMLparser {
 				
 				CompleteTextElement Elem=new CompleteTextElement(TypeC, nodeValue);
 				Doc.getDescription().add(Elem);
-				
+				if (ControlValue.equals("001"))
+					ValueIdControl=nodeValue;
 				}
 			else
 				LColec.getLog().add("(Record = "+RecorNumber+") Error, controled value not asociated a MARC: " + ControlValue);
 			}
-		
+		return ValueIdControl;
 	}
 
-	
+
 
 }

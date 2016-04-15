@@ -6,6 +6,7 @@ package fdi.ucm.server.importparser.marcxml;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,6 +42,7 @@ public class CollectionMARCXML implements InterfaceMARCXMLparser {
 	private HashMap<String, CompleteDocuments> ListaAutores;
 	private CompleteGrammarAuthor AuthorClase;
 	private CompleteGrammar Author;
+	private HashSet<String> HashValuesControl;
 	
  
 
@@ -122,13 +124,20 @@ public class CollectionMARCXML implements InterfaceMARCXMLparser {
 		if(nodeListMARC != null)
 			for (int i = 0; i < nodeListMARC.getLength(); i++) {
 				CompleteDocuments D=new CompleteDocuments(coleccionstatica, Obra, "", "");
-				coleccionstatica.getEstructuras().add(D);
+				
 //				System.out.println("R"+i);
 				Node Record = nodeListMARC.item(i);
+				
 				processLeader(Record,D,i);
-				processDirectory(Record,D,i);
-				processControl(Record,D,i);
+				processDirectory(Record,D,i);	
+				
+				String V001=processControl(Record,D,i);
+				if (V001!=null&&!HashValuesControl.contains(V001))
+				{
 				processData(Record,D,i);
+				coleccionstatica.getEstructuras().add(D);
+				}
+				
 //				processNode(Record);
 			}
 		
@@ -170,7 +179,8 @@ public class CollectionMARCXML implements InterfaceMARCXMLparser {
 		
 	}
 
-	private void processControl(Node record, CompleteDocuments d, int RecorNumber) {
+	private String processControl(Node record, CompleteDocuments d, int RecorNumber) {
+		String valueIDControl=null;
 		if (record instanceof Element)
 		{
 		org.w3c.dom.NodeList nodeList=((Element) record).getElementsByTagName("controlfield");
@@ -179,7 +189,11 @@ public class CollectionMARCXML implements InterfaceMARCXMLparser {
 				Node value = nodeList.item(i).getFirstChild();
 				Node controled = nodeList.item(i);
 				if (value!=null)
-					Control.ProcessInstances(controled,value.getNodeValue(),d,RecorNumber);
+					{
+					String valueIDControlt=Control.ProcessInstances(controled,value.getNodeValue(),d,RecorNumber);
+					if (valueIDControlt!=null)
+						valueIDControl=valueIDControlt;
+					}
 			}
 		}
 		else 
@@ -190,7 +204,7 @@ public class CollectionMARCXML implements InterfaceMARCXMLparser {
 					processControl(nodeListXMLson.item(i), d,RecorNumber);
 				}
 		}
-		
+		return valueIDControl;
 	}
 
 	private void processDirectory(Node record, CompleteDocuments d, int RecorNumber) {
@@ -419,6 +433,11 @@ public void setAuthor(CompleteGrammar author) {
 
 public HashMap<String, Integer> getAmbitoAuthor() {
 	return AmbitoAuthor;
+}
+
+public void setValuesControl(HashSet<String> hashValuesControl) {
+	HashValuesControl=hashValuesControl;
+	
 }
 	
 	
