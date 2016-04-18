@@ -55,7 +55,7 @@ public class LoadCollectionMARCXML extends LoadCollection {
 			
 			if (HashValuesControl==null)
 				HashValuesControl=new HashSet<String>();
-			CollectionXMLparser.setValuesControl(HashValuesControl);
+			CollectionXMLparser.setValuesControl(HashValuesControl,Log);
 			
 			CollectionXMLparser.ProcessAttributes();
 			CollectionXMLparser.ProcessInstances();
@@ -156,17 +156,17 @@ public boolean needComplete() {
 public void setcompleteCollectionPre(CompleteCollection pre) {
 	
 	HashValuesControl=new HashSet<String>();
-	boolean found = false;
-	CompleteStructure VOO1=null;
+	ArrayList<CompleteStructure> VOO1=new ArrayList<CompleteStructure>();
 	for (CompleteGrammar gram1 : pre.getMetamodelGrammar()) {
-		 VOO1=find001(gram1.getSons());
-		if (found)
-			break;
+		CompleteStructure found = find001(gram1.getSons());
+		if (found!=null)
+			VOO1.add(found);
+
 	}
 	
 	for (CompleteDocuments doc : pre.getEstructuras()) 
 		for (CompleteElement elem : doc.getDescription())
-			if (elem.getHastype().equals(VOO1)&&elem instanceof CompleteTextElement)
+			if (VOO1.contains(elem.getHastype())&&elem instanceof CompleteTextElement)
 			{
 				HashValuesControl.add(((CompleteTextElement)elem).getValue());
 			}

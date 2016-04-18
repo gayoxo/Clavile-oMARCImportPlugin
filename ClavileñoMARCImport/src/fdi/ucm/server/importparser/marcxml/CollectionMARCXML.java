@@ -4,6 +4,7 @@
 package fdi.ucm.server.importparser.marcxml;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +44,7 @@ public class CollectionMARCXML implements InterfaceMARCXMLparser {
 	private CompleteGrammarAuthor AuthorClase;
 	private CompleteGrammar Author;
 	private HashSet<String> HashValuesControl;
+	private ArrayList<String> Log;
 	
  
 
@@ -137,6 +139,8 @@ public class CollectionMARCXML implements InterfaceMARCXMLparser {
 				processData(Record,D,i);
 				coleccionstatica.getEstructuras().add(D);
 				}
+				else
+					Log.add("Record Control Value->"+V001+" already exist in the system");
 				
 //				processNode(Record);
 			}
@@ -435,9 +439,9 @@ public HashMap<String, Integer> getAmbitoAuthor() {
 	return AmbitoAuthor;
 }
 
-public void setValuesControl(HashSet<String> hashValuesControl) {
+public void setValuesControl(HashSet<String> hashValuesControl, ArrayList<String> log) {
 	HashValuesControl=hashValuesControl;
-	
+	Log=log;
 }
 	
 	
